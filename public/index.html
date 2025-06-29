@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión - Node.js MongoDB</title>
+    
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -257,6 +264,11 @@
 
         // Verificar si hay token al cargar la página
         window.onload = function() {
+            // Track page view
+            if (window.va) {
+                window.va('track', 'Page View', { page: 'Login' });
+            }
+            
             if (token) {
                 // Si ya tiene token, redirigir al dashboard
                 window.location.href = '/dashboard.html';
@@ -343,6 +355,11 @@
                 currentUser = response.data.user;
                 localStorage.setItem('token', token);
                 
+                // Track successful login
+                if (window.va) {
+                    window.va('track', 'Login', { method: 'email', role: response.data.user.role });
+                }
+                
                 showAlert('Inicio de sesión exitoso');
                 
                 // Redirigir al dashboard
@@ -372,6 +389,11 @@
                 token = response.data.token;
                 currentUser = response.data.user;
                 localStorage.setItem('token', token);
+                
+                // Track successful signup
+                if (window.va) {
+                    window.va('track', 'Signup', { method: 'email' });
+                }
                 
                 showAlert('Registro exitoso');
                 
