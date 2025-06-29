@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Gestión</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .stats-card {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stats-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .item-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .item-meta {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .item-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: white;
+            border-bottom-color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .user-info {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header con información del usuario -->
+        <div class="header">
+            <div>
+                <h1>🚀 Dashboard</h1>
+                <p>Sistema de Gestión</p>
+            </div>
+            <div class="user-info">
+                <div>
+                    <strong>Bienvenido, <span id="username">-</span></strong>
+                    <br>
+                    <span id="userRole" class="badge badge-primary">-</span>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary btn-small">Cerrar Sesión</button>
+            </div>
+        </div>
+
+        <!-- Tabs de navegación -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('items')">📋 Mis Items</div>
+            <div class="tab" onclick="switchTab('create')">➕ Crear Item</div>
+            <div class="tab" onclick="switchTab('stats')">📊 Estadísticas</div>
+            <div id="adminTab" class="tab" onclick="switchTab('admin')" style="display: none;">👥 Usuarios</div>
+        </div>
+
+        <!-- Contenido de Items -->
+        <div id="itemsTab" class="tab-content active">
+            <div class="card">
+                <h3>📋 Mis Items</h3>
+                <div style="margin-bottom: 20px;">
+                    <button onclick="loadMyItems()" class="btn btn-secondary">🔄 Actualizar</button>
+                    <button onclick="loadAllItems()" class="btn btn-secondary">🌐 Ver Todos los Públicos</button>
+                </div>
+                <div id="itemsList" class="items-grid">
+                    <div class="loading">Cargando items...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido de Crear Item -->
+        <div id="createTab" class="tab-content">
+            <div class="card">
+                <h3>➕ Crear Nuevo Item</h3>
+                <form id="itemForm">
+                    <div class="form-group">
+                        <label>Título:</label>
+                        <input type="text" id="itemTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea id="itemDescription" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría:</label>
+                        <select id="itemCategory" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="tecnologia">Tecnología</option>
+                            <option value="ciencia">Ciencia</option>
+                            <option value="deportes">Deportes</option>
+                            <option value="entretenimiento">Entretenimiento</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags (separados por comas):</label>
+                        <input type="text" id="itemTags" placeholder="tag1, tag2, tag3">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="itemPublic" checked> Hacer público
+                        </label>
+                    </div>
+                    <button type="submit" class="btn">Crear Item</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Contenido de Estadísticas -->
+        <div id="statsTab" class="tab-content">
+            <div class="cards" id="statsCards">
+                <div class="loading">Cargando estadísticas...</div>
+            </div>
+        </div>
+
+        <!-- Contenido de Admin -->
+        <div id="adminTab" class="tab-content">
+            <div class="card">
+                <h3>👥 Gestión de Usuarios</h3>
+                <button onclick="loadUsers()" class="btn btn-secondary">🔄 Actualizar Lista</button>
+                <div id="usersList" style="margin-top: 20px;">
+                    <div class="loading">Cargando usuarios...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas -->
+        <div id="alerts"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let token = localStorage.getItem('token');
+        let currentUser = null;
+
+        // Verificar autenticación al cargar
+        window.onload = function() {
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+            verifyToken();
+        };
+
+        // Mostrar alerta
+        function showAlert(message, type = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Hacer petición a la API
+        async function apiRequest(url, options = {}) {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': `Bearer ${token}` })
+                },
+                ...options
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}${url}`, config);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                    throw new Error(data.message || 'Error en la petición');
+                }
+                
+                return data;
+            } catch (error) {
+                showAlert(error.message, 'error');
+                throw error;
+            }
+        }
+
+        // Verificar token
+        async function verifyToken() {
+            try {
+                const response = await apiRequest('/api/auth/me');
+                currentUser = response.data.user;
+                updateUserInfo();
+                loadMyItems();
+                loadStats();
+                
+                if (currentUser.role === 'admin') {
+                    document.getElementById('adminTab').style.display = 'block';
+                }
+            } catch (error) {
+                logout();
+            }
+        }
+
+        // Actualizar información del usuario
+        function updateUserInfo() {
+            document.getElementById('username').textContent = currentUser.username;
+            document.getElementById('userRole').textContent = currentUser.role.toUpperCase();
+        }
+
+        // Cerrar sesión
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        }
+
+        // Cambiar tab
+        function switchTab(tabName) {
+            // Remover active de todos los tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Activar tab seleccionado
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Cargar contenido específico
+            if (tabName === 'stats') {
+                loadStats();
+            } else if (tabName === 'admin' && currentUser.role === 'admin') {
+                loadUsers();
+            }
+        }
+
+        // Crear item
+        document.getElementById('itemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('itemTitle').value;
+            const description = document.getElementById('itemDescription').value;
+            const category = document.getElementById('itemCategory').value;
+            const tagsStr = document.getElementById('itemTags').value;
+            const isPublic = document.getElementById('itemPublic').checked;
+            
+            const tags = tagsStr ? tagsStr.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+
+            try {
+                await apiRequest('/api/items', {
+                    method: 'POST',
+                    body: JSON.stringify({ title, description, category, tags, isPublic })
+                });
+
+                showAlert('Item creado exitosamente');
+                document.getElementById('itemForm').reset();
+                
+                // Cambiar a tab de items y recargar
+                switchTab('items');
+                loadMyItems();
+            } catch (error) {
+                // Error ya mostrado en apiRequest
+            }
+        });
+
+        // Cargar mis items
+        async function loadMyItems() {
+            try {
+                const response = await apiRequest('/api/items/my');
+                displayItems(response.data.items, 'Mis Items');
+            } catch (error) {
+                document.getElementById('itemsList').innerHTML = '<p>Error cargando items</p>';
+            }
+        }
+
+        // Cargar todos los items públicos
+        async function loadAllItems() {
+            try {
+                const response = await apiRequest('/api/items');
+                displayItems(response.data.items, 'Items Públicos');
+            } catch (error) {
+                document.getElementById('itemsList').innerHTML = '<p>Error cargando items</p>';
+            }
+        }
+
+        // Mostrar items
+        function displayItems(items, title) {
+            const itemsList = document.getElementById('itemsList');
+            
+            if (items.length === 0) {
+                itemsList.innerHTML = `<p>No hay ${title.toLowerCase()} disponibles.</p>`;
+                return;
+            }
+            
+            itemsList.innerHTML = items.map(item => `
+                <div class="item-card">
+                    <h4>${item.title}</h4>
+                    <p>${item.description}</p>
+                    <div>
+                        <span class="badge badge-primary">${item.category}</span>
+                        <span class="badge badge-success">${item.status}</span>
+                        ${item.isPublic ? '<span class="badge badge-primary">Público</span>' : '<span class="badge badge-secondary">Privado</span>'}
+                    </div>
+                    ${item.tags.length > 0 ? `<div style="margin-top: 10px;">${item.tags.map(tag => `<span class="badge badge-secondary">${tag}</span>`).join('')}</div>` : ''}
+                    <div class="item-meta">
+                        Creado por: ${item.createdBy.username}<br>
+                        Fecha: ${new Date(item.createdAt).toLocaleDateString()}
+                    </div>
+                    ${item.createdBy._id === currentUser._id || currentUser.role === 'admin' ? `
+                        <div class="item-actions">
+                            <button onclick="editItem('${item._id}')" class="btn btn-secondary btn-small">✏️ Editar</button>
+                            <button onclick="deleteItem('${item._id}')" class="btn btn-danger btn-small">🗑️ Eliminar</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Cargar estadísticas
+        async function loadStats() {
+            try {
+                const response = await apiRequest('/api/items/categories/stats');
+                const stats = response.data.stats;
+                
+                const statsCards = document.getElementById('statsCards');
+                
+                if (stats.length === 0) {
+                    statsCards.innerHTML = '<p>No hay estadísticas disponibles.</p>';
+                    return;
+                }
+                
+                const totalItems = stats.reduce((sum, stat) => sum + stat.count, 0);
+                
+                statsCards.innerHTML = `
+                    <div class="card stats-card">
+                        <div class="stats-number">${totalItems}</div>
+                        <h3>Total Items</h3>
+                    </div>
+                    ${stats.map(stat => `
+                        <div class="card">
+                            <h3>${stat._id.charAt(0).toUpperCase() + stat._id.slice(1)}</h3>
+                            <div class="stats-number">${stat.count}</div>
+                            <p>Activos: ${stat.activeCount}</p>
+                        </div>
+                    `).join('')}
+                `;
+            } catch (error) {
+                document.getElementById('statsCards').innerHTML = '<p>Error cargando estadísticas</p>';
+            }
+        }
+
+        // Cargar usuarios (solo admin)
+        async function loadUsers() {
+            if (currentUser.role !== 'admin') return;
+            
+            try {
+                const response = await apiRequest('/api/auth/users');
+                const users = response.data.users;
+                
+                const usersList = document.getElementById('usersList');
+                
+                usersList.innerHTML = `
+                    <div class="items-grid">
+                        ${users.map(user => `
+                            <div class="item-card">
+                                <h4>${user.username}</h4>
+                                <p>${user.email}</p>
+                                <div>
+                                    <span class="badge badge-${user.role === 'admin' ? 'primary' : 'secondary'}">${user.role.toUpperCase()}</span>
+                                    <span class="badge badge-${user.isActive ? 'success' : 'secondary'}">${user.isActive ? 'Activo' : 'Inactivo'}</span>
+                                </div>
+                                <div class="item-meta">
+                                    Registrado: ${new Date(user.createdAt).toLocaleDateString()}
+                                </div>
+                                ${user._id !== currentUser._id ? `
+                                    <div class="item-actions">
+                                        <button onclick="deleteUser('${user._id}')" class="btn btn-danger btn-small">🗑️ Eliminar</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('usersList').innerHTML = '<p>Error cargando usuarios</p>';
+            }
+        }
+
+        // Eliminar item
+        async function deleteItem(itemId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este item?')) return;
+            
+            try {
+                await apiRequest(`/api/items/${itemId}`, { method: 'DELETE' });
+                showAlert('Item eliminado exitosamente');
+                loadMyItems();
+            } catch (error) {
+                // Error ya mostrado en apiRequest
+            }
+        }
+
+        // Eliminar usuario (solo admin)
+        async function deleteUser(userId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este usuario?')) return;
+            
+            try {
+                await apiRequest(`/api/auth/users/${userId}`, { method: 'DELETE' });
+                showAlert('Usuario eliminado exitosamente');
+                loadUsers();
+            } catch (error) {
+                // Error ya mostrado en apiRequest
+            }
+        }
+
+        // Función placeholder para editar (se puede implementar más tarde)
+        function editItem(itemId) {
+            showAlert('Función de edición en desarrollo', 'error');
+        }
+    </script>
+</body>
+</html>
