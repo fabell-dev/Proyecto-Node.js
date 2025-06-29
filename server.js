@@ -72,12 +72,27 @@ app.use(express.static('public'));
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 
-// Ruta principal con información de la API
+// Ruta para la página de login
+app.get('/login', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+// Ruta para el dashboard
+app.get('/dashboard', (req, res) => {
+  res.sendFile(__dirname + '/public/dashboard.html');
+});
+
+// Ruta principal - redirigir al login
 app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'API del Servidor Node.js con MongoDB',
-    version: '1.0.0',
+  // Si es una petición del navegador, redirigir al login
+  if (req.headers.accept && req.headers.accept.includes('text/html')) {
+    res.redirect('/login');
+  } else {
+    // Si es una petición de API, mostrar documentación
+    res.json({
+      success: true,
+      message: 'API del Servidor Node.js con MongoDB',
+      version: '1.0.0',
     endpoints: {
       auth: {
         register: 'POST /api/auth/register',
@@ -105,7 +120,8 @@ app.get('/', (req, res) => {
         note: '¡CAMBIA ESTAS CREDENCIALES EN PRODUCCIÓN!'
       }
     }
-  });
+    });
+  }
 });
 
 // Ruta para health check

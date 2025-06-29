@@ -290,6 +290,12 @@
 
             try {
                 const response = await fetch(`${API_BASE}${url}`, config);
+                
+                // Si no hay respuesta o hay error de red
+                if (!response) {
+                    throw new Error('No se pudo conectar al servidor');
+                }
+                
                 const data = await response.json();
                 
                 if (!response.ok) {
@@ -298,7 +304,12 @@
                 
                 return data;
             } catch (error) {
-                showAlert(error.message, 'error');
+                // Si es un error de red o el servidor no responde
+                if (error instanceof TypeError && error.message.includes('fetch')) {
+                    showAlert('Error de conexión al servidor. Verifica tu conexión a internet.', 'error');
+                } else {
+                    showAlert(error.message, 'error');
+                }
                 throw error;
             }
         }
