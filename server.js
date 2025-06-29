@@ -17,7 +17,14 @@ connectDB();
 // Configuración de CORS
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://tu-dominio.vercel.app'] // Cambia por tu dominio de producción
+    ? function (origin, callback) {
+        // Permitir requests sin origin (como aplicaciones móviles) y desde Vercel
+        if (!origin || origin.includes('.vercel.app') || origin.includes('localhost')) {
+          callback(null, true);
+        } else {
+          callback(new Error('No permitido por CORS'));
+        }
+      }
     : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'],
   credentials: true,
   optionsSuccessStatus: 200
